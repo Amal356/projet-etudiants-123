@@ -1,0 +1,17 @@
+com\gradingservice\GradingServiceApplication.class
+com\gradingservice\exception\GlobalExceptionHandler.class
+com\gradingservice\dto\CreateNoteRequest.class
+com\gradingservice\client\StudentFeignClient.class
+com\gradingservice\config\OpenAPIConfig.class
+com\gradingservice\service\NoteService.class
+com\gradingservice\dto\StudentDTO.class
+com\gradingservice\config\RedisConfig.class
+com\gradingservice\dto\DepartmentDTO.class
+com\gradingservice\dto\NoteDTO.class
+com\gradingservice\repository\NoteRepository.class
+com\gradingservice\dto\StudentNoteDetailsDTO.class
+com\gradingservice\entity\Note.class
+com\gradingservice\controller\NoteController.class
+com\gradingservice\mapper\NoteMapper.class
+com\gradingservice\exception\ErrorResponse.class
+com\gradingservice\exception\ResourceNotFoundException.class
