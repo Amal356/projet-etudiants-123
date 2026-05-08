@@ -180,38 +180,49 @@ git commit -m "PROJ-24 : ajout des tests unitaires StudentService"
 
 ---
 
-### Q6 - Microservice Authentification (Express + MongoDB + JWT)
+### Q6 - ✅ Microservice Authentification (Express + MongoDB + JWT)
+
+**Status:** ✅ TERMINÉ
 
 **Objectif:** Créer un nouveau microservice Node.js pour l'authentification
 
-#### Structure du Projet
+#### Structure du Projet ✅
 ```
 auth-service/
 ├── src/
+│   ├── config/
+│   │   └── database.js          # ✅ Connexion MongoDB
 │   ├── models/
-│   │   └── User.js
+│   │   └── User.js              # ✅ Modèle utilisateur
 │   ├── routes/
-│   │   └── auth.js
+│   │   └── auth.js              # ✅ Routes d'authentification
 │   ├── middleware/
-│   │   └── authMiddleware.js
-│   └── app.js
-├── package.json
-├── Dockerfile
-└── .env
+│   │   └── authMiddleware.js    # ✅ Middleware JWT
+│   └── app.js                   # ✅ Application Express
+├── package.json                 # ✅ Dépendances npm
+├── Dockerfile                   # ✅ Image Docker
+├── .env                         # ✅ Configuration
+├── .gitignore                   # ✅ Exclusions Git
+├── README.md                    # ✅ Documentation complète
+└── test-auth-service.sh         # ✅ Script de test
 ```
 
-#### Endpoints à Implémenter
-- ✅ `POST /auth/register` - Inscription
+#### Endpoints Implémentés ✅
+- ✅ `POST /auth/register` - Inscription avec validation
 - ✅ `POST /auth/login` - Connexion (retourne JWT)
 - ✅ `GET /auth/verify` - Vérification du token
+- ✅ `GET /auth/me` - Profil utilisateur
+- ✅ `GET /health` - Health check
 
-#### Technologies
-- **Express** - Framework web
-- **Mongoose** - ODM pour MongoDB
-- **bcrypt** - Hachage des mots de passe
-- **jsonwebtoken** - Génération et vérification JWT
+#### Technologies ✅
+- ✅ **Express 4.18.2** - Framework web
+- ✅ **Mongoose 8.0.0** - ODM pour MongoDB
+- ✅ **bcrypt 5.1.1** - Hachage des mots de passe (10 rounds)
+- ✅ **jsonwebtoken 9.0.2** - Génération et vérification JWT
+- ✅ **dotenv 16.3.1** - Variables d'environnement
+- ✅ **cors 2.8.5** - Gestion CORS
 
-#### Dépendances npm
+#### Dépendances npm ✅
 ```json
 {
   "dependencies": {
@@ -221,20 +232,27 @@ auth-service/
     "jsonwebtoken": "^9.0.2",
     "dotenv": "^16.3.1",
     "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
   }
 }
 ```
 
-#### Docker Compose
-Ajouter au `docker-compose.yml`:
+#### Docker Compose ✅
+Ajouté au `docker-compose.yml`:
 ```yaml
 mongodb:
-  image: mongo:7
+  image: mongo:7-alpine
   container_name: studentdb-mongodb
   ports:
     - "27017:27017"
+  volumes:
+    - mongodb-data:/data/db
   networks:
     - student-network
+  healthcheck:
+    test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
 
 auth-service:
   build: ./auth-service
@@ -242,14 +260,43 @@ auth-service:
   ports:
     - "3001:3001"
   environment:
-    MONGO_URI: mongodb://mongodb:27017/authdb
-    JWT_SECRET: votre_secret_jwt_ici
     PORT: 3001
+    MONGO_URI: mongodb://mongodb:27017/authdb
+    JWT_SECRET: votre_secret_jwt_super_securise
+    JWT_EXPIRES_IN: 24h
+    NODE_ENV: production
   depends_on:
-    - mongodb
+    mongodb:
+      condition: service_healthy
   networks:
     - student-network
 ```
+
+#### Sécurité Implémentée ✅
+- ✅ Hachage bcrypt avec 10 rounds de salt
+- ✅ JWT avec expiration (24h par défaut)
+- ✅ Validation Mongoose (email, username, password)
+- ✅ Middleware de protection des routes
+- ✅ Gestion des rôles (user, admin)
+- ✅ Utilisateur non-root dans Docker
+- ✅ Messages d'erreur génériques
+
+#### Tests ✅
+```bash
+# Démarrer les services
+docker-compose up mongodb auth-service
+
+# Tester avec le script
+cd auth-service
+chmod +x test-auth-service.sh
+./test-auth-service.sh
+```
+
+#### Documentation ✅
+- ✅ README.md complet avec exemples
+- ✅ PARTIE4_AUTH_SERVICE.md avec détails d'implémentation
+- ✅ Script de test automatisé
+- ✅ Exemples d'intégration (Frontend, API Gateway, Flutter)
 
 ---
 
@@ -316,7 +363,7 @@ auth-service:
 12. ✅ Créer Test Plan et Tests dans Jira
 13. ✅ Configurer GitHub Actions
 
-### Phase 4: Auth Service (Semaine 2-3)
+### Phase 4: Auth Service (Semaine 2-3) ✅
 14. ✅ Créer projet Node.js auth-service
 15. ✅ Implémenter modèle User
 16. ✅ Implémenter routes /register et /login
@@ -343,12 +390,12 @@ auth-service:
 - [ ] Pipeline CI/CD publie les résultats dans Xray
 
 ### Auth Service
-- [ ] Service démarre correctement
-- [ ] Endpoint /register fonctionne
-- [ ] Endpoint /login retourne un JWT valide
-- [ ] Mots de passe hashés avec bcrypt
-- [ ] MongoDB connecté
-- [ ] Service intégré dans docker-compose
+- [x] Service démarre correctement
+- [x] Endpoint /register fonctionne
+- [x] Endpoint /login retourne un JWT valide
+- [x] Mots de passe hashés avec bcrypt
+- [x] MongoDB connecté
+- [x] Service intégré dans docker-compose
 
 ---
 

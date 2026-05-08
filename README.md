@@ -424,6 +424,89 @@ public interface StudentFeignClient {
 - Maven
 - Git
 
+## 📊 Gestion de Projet avec Jira
+
+### Organisation des Sprints
+
+Ce projet est organisé en 4 sprints Scrum dans Jira:
+
+#### Sprint 1 - API REST de Base (Partie 1)
+- 6 User Stories (PROJ-1 à PROJ-6)
+- Entité Etudiant avec JPA
+- Endpoint GET /api/etudiants
+- Configuration PostgreSQL Docker
+- Docker Compose
+- Données initiales
+- Dépôt GitHub
+
+#### Sprint 2 - Enrichissement (Partie 2)
+- 12 User Stories (PROJ-7 à PROJ-18)
+- Branche version-2
+- Méthode age() et tests BDD Cucumber
+- Page index.html avec Fetch JS
+- Publication Docker Hub
+- Manifests Kubernetes K3S
+- Entité Département + relation ManyToOne
+- Architecture en couches propre
+- CRUD complet Etudiant et Département
+- Gestion erreurs HTTP
+- Documentation Swagger OpenAPI
+- Cache Redis
+
+#### Sprint 3 - Architecture Micro Services (Partie 3)
+- 9 User Stories (PROJ-19 à PROJ-27)
+- Branche version-3
+- Workflow GitHub avec protection branches
+- Micro service grading-service
+- Eureka Server
+- Feign Client
+- API Gateway
+- Application mobile avec filtre département
+- Frontend Next.js
+- Docker Compose unifié
+
+#### Sprint 4 - Tests et Qualité (Partie 4)
+- 9 User Stories (PROJ-28 à PROJ-36)
+- Branche version-4
+- Tests unitaires JUnit + Mockito
+- Tests d'intégration Testcontainers
+- Tests E2E Cypress
+- Tests de stress Gatling
+- Couverture JaCoCo ≥ 80%
+- Intégration GitHub ↔ Jira
+- Intégration Xray
+- Micro service Auth Express MongoDB JWT
+
+### Epic: Gestion des Étudiants
+Toutes les 36 User Stories sont liées à l'Epic "Gestion des Étudiants" qui couvre le développement complet du système.
+
+### Documentation Jira
+- **[GUIDE_JIRA_COMPLET.md](./GUIDE_JIRA_COMPLET.md)** - Guide complet des 4 sprints (36 stories)
+- **[Board Jira](https://amalyousef356.atlassian.net/jira/software/projects/PROJ/boards/100)** - Accès direct au board Scrum
+
+### Board Jira - Sprint 1
+
+**Lien du board:** [https://amalyousef356.atlassian.net/jira/software/projects/PROJ/boards/100](https://amalyousef356.atlassian.net/jira/software/projects/PROJ/boards/100)
+
+![Board Jira Sprint 1](./docs/jira-board-sprint1.png)
+
+Le board Jira montre les 6 User Stories du Sprint 1 (PROJ-1 à PROJ-6) organisées en colonnes:
+- **À FAIRE**: Stories en attente
+- **EN COURS**: Stories en développement
+- **TERMINÉ**: Stories complétées
+
+---
+
+## 📚 Documentation Complète
+
+- **[GUIDE_JIRA_COMPLET.md](./GUIDE_JIRA_COMPLET.md)** - Guide Jira complet (36 User Stories)
+- **[PARTIE4_IMPLEMENTATION.md](./PARTIE4_IMPLEMENTATION.md)** - Plan d'implémentation Partie 4
+- **[PARTIE4_PROGRESS.md](./PARTIE4_PROGRESS.md)** - Progression et résultats des tests
+- **[PARTIE4_GITHUB_JIRA_INTEGRATION.md](./PARTIE4_GITHUB_JIRA_INTEGRATION.md)** - Intégration GitHub ↔ Jira
+- **[CONTRIBUTING.md](./CONTRIBUTING.md)** - Guide de contribution
+
+---
+
 ## Auteurs
 
 - Développé dans le cadre du TP Intégration des Compétences

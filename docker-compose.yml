@@ -31,6 +31,21 @@ services:
       timeout: 5s
       retries: 5
 
+  mongodb:
+    image: mongo:7
+    container_name: studentdb-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb-data:/data/db
+    networks:
+      - student-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   eureka-server:
     build:
       context: ./eureka-server
@@ -114,9 +129,29 @@ services:
     networks:
       - student-network
 
+  auth-service:
+    build:
+      context: ./auth-service
+      dockerfile: Dockerfile
+    container_name: auth-service
+    ports:
+      - "3001:3001"
+    environment:
+      PORT: 3001
+      MONGO_URI: mongodb://mongodb:27017/authdb
+      JWT_SECRET: votre_secret_jwt_super_securise_changez_moi_en_production
+      JWT_EXPIRES_IN: 24h
+      NODE_ENV: production
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - student-network
+
 networks:
   student-network:
     driver: bridge
 
 volumes:
   postgres-data:
+  mongodb-data:

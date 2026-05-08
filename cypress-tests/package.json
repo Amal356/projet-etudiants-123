@@ -1,0 +1,22 @@
+{
+  "name": "cypress-e2e-tests",
+  "version": "1.0.0",
+  "description": "Tests E2E avec Cypress pour l'API Étudiant",
+  "scripts": {
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run",
+    "test:e2e": "cypress run --spec 'cypress/e2e/**/*.cy.js'",
+    "test:api": "cypress run --spec 'cypress/e2e/api/**/*.cy.js'"
+  },
+  "keywords": [
+    "cypress",
+    "e2e",
+    "testing",
+    "api"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "cypress": "^13.6.0"
+  }
+}
