@@ -1,0 +1,160 @@
+name: CI Tests and Quality
+
+on:
+  push:
+    branches: [ main, version-2, version-3, version-4 ]
+  pull_request:
+    branches: [ main, version-2, version-3, version-4 ]
+
+jobs:
+  test-spring-boot:
+    name: Test Spring Boot API
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+      
+      - name: Run tests for spring-boot-api
+        run: |
+          cd spring-boot-api
+          mvn clean verify
+      
+      - name: Generate JaCoCo report
+        run: |
+          cd spring-boot-api
+          mvn jacoco:report
+      
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./spring-boot-api/target/site/jacoco/jacoco.xml
+          flags: spring-boot-api
+          name: spring-boot-api-coverage
+      
+      - name: Publish Test Report
+        uses: mikepenz/action-junit-report@v3
+        if: always()
+        with:
+          report_paths: '**/target/surefire-reports/TEST-*.xml'
+          check_name: Spring Boot API Test Results
+
+  test-grading-service:
+    name: Test Grading Service
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+      
+      - name: Run tests for grading-service
+        run: |
+          cd grading-service
+          mvn clean verify
+      
+      - name: Generate JaCoCo report
+        run: |
+          cd grading-service
+          mvn jacoco:report
+      
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./grading-service/target/site/jacoco/jacoco.xml
+          flags: grading-service
+          name: grading-service-coverage
+
+  test-auth-service:
+    name: Test Auth Service
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: auth-service/package-lock.json
+      
+      - name: Install dependencies
+        run: |
+          cd auth-service
+          npm ci
+      
+      - name: Run tests
+        run: |
+          cd auth-service
+          npm test
+        env:
+          MONGODB_URI: mongodb://localhost:27017/test
+          JWT_SECRET: test-secret-key
+
+  build-docker-images:
+    name: Build Docker Images
+    runs-on: ubuntu-latest
+    needs: [test-spring-boot, test-grading-service]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      
+      - name: Build Eureka Server
+        run: |
+          cd eureka-server
+          docker build -t eureka-server:test .
+      
+      - name: Build API Gateway
+        run: |
+          cd api-gateway
+          docker build -t api-gateway:test .
+      
+      - name: Build Spring Boot API
+        run: |
+          cd spring-boot-api
+          docker build -t etudiant-service:test .
+      
+      - name: Build Grading Service
+        run: |
+          cd grading-service
+          docker build -t grading-service:test .
+
+  quality-check:
+    name: Code Quality Check
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+      
+      - name: Check code coverage threshold
+        run: |
+          cd spring-boot-api
+          mvn clean verify
+          echo "✅ Code coverage check passed"
