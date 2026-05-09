@@ -260,8 +260,9 @@
                 <artifactId>gatling-maven-plugin</artifactId>
                 <version>${gatling-maven-plugin.version}</version>
                 <configuration>
-                    <simulationClass>simulations.EtudiantSimulation</simulationClass>
-                </configuration>
+        <simulationClass>simulations.EtudiantSimulation</simulationClass>
+        <simulationsFolder>src/gatling/java</simulationsFolder>
+    </configuration>
             </plugin>
         </plugins>
     </build>
