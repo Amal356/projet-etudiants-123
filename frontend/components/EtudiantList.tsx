@@ -76,8 +76,8 @@ export default function EtudiantList({
         
         // Filtre côté client pour le département
         if (filtreDepartement) {
-          data = data.filter((e: Etudiant) => 
-            e.departement?.id === parseInt(filtreDepartement)
+          data = data.filter((e: any) => 
+       e.departementId === parseInt(filtreDepartement)
           )
         }
         
