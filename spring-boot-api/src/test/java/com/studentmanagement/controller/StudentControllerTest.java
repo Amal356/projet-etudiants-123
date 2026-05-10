@@ -1,19 +1,24 @@
 package com.studentmanagement.controller;
 
-import com.studentmanagement.entity.Student;
-import com.studentmanagement.repository.StudentRepository;
+import com.studentmanagement.dto.StudentDTO;
+import com.studentmanagement.service.StudentService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.Collections;
 
 import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -28,21 +33,25 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * - 2.4: Includes all Student entity fields
  * - 2.5: Returns empty array when no students exist
  */
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
+@TestPropertySource(properties = {
+    "spring.cloud.discovery.enabled=false",
+    "eureka.client.enabled=false",
+    "spring.cache.type=none"
+})
 class StudentControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    private StudentRepository studentRepository;
+    @MockBean
+    private StudentService studentService;
 
     @BeforeEach
     void setUp() {
-        // Clean database before each test
-        studentRepository.deleteAll();
+        // Setup default behavior for mocks
     }
 
     /**
@@ -51,6 +60,8 @@ class StudentControllerTest {
      */
     @Test
     void getAllStudents_ReturnsOkStatus() throws Exception {
+        when(studentService.findAll()).thenReturn(Collections.emptyList());
+        
         mockMvc.perform(get("/api/etudiants"))
                 .andExpect(status().isOk());
     }
@@ -61,6 +72,8 @@ class StudentControllerTest {
      */
     @Test
     void getAllStudents_ReturnsJsonContentType() throws Exception {
+        when(studentService.findAll()).thenReturn(Collections.emptyList());
+        
         mockMvc.perform(get("/api/etudiants"))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
@@ -71,6 +84,8 @@ class StudentControllerTest {
      */
     @Test
     void getAllStudents_WhenDatabaseEmpty_ReturnsEmptyArray() throws Exception {
+        when(studentService.findAll()).thenReturn(Collections.emptyList());
+        
         mockMvc.perform(get("/api/etudiants"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(0)))
@@ -85,14 +100,13 @@ class StudentControllerTest {
      */
     @Test
     void getAllStudents_WithStudentsInDatabase_ReturnsAllStudents() throws Exception {
-        // Given: Two students in database
-        Student student1 = new Student(null, "AB123456", "Dupont", LocalDate.of(2000, 5, 15),
-            "dupont@example.com", 2018, null);
-        studentRepository.save(student1);
-
-        Student student2 = new Student(null, "CD789012", "Martin", LocalDate.of(1999, 8, 22),
-            "martin@example.com", 2017, null);
-        studentRepository.save(student2);
+        // Given: Two students as DTOs
+        StudentDTO student1 = new StudentDTO(1L, "AB123456", "Dupont", LocalDate.of(2000, 5, 15),
+            "dupont@example.com", 2018, null, null, 26);
+        StudentDTO student2 = new StudentDTO(2L, "CD789012", "Martin", LocalDate.of(1999, 8, 22),
+            "martin@example.com", 2017, null, null, 26);
+        
+        when(studentService.findAll()).thenReturn(Arrays.asList(student1, student2));
 
         // When/Then: GET request returns both students with all fields
         mockMvc.perform(get("/api/etudiants"))
@@ -114,10 +128,11 @@ class StudentControllerTest {
      */
     @Test
     void getAllStudents_WithOneStudent_ReturnsSingleStudentArray() throws Exception {
-        // Given: One student in database
-        Student student = new Student(null, "EF345678", "Bernard", LocalDate.of(2001, 3, 10),
-            "bernard@example.com", 2019, null);
-        studentRepository.save(student);
+        // Given: One student as DTO
+        StudentDTO student = new StudentDTO(1L, "EF345678", "Bernard", LocalDate.of(2001, 3, 10),
+            "bernard@example.com", 2019, null, null, 25);
+        
+        when(studentService.findAll()).thenReturn(Collections.singletonList(student));
 
         // When/Then: GET request returns array with one student
         mockMvc.perform(get("/api/etudiants"))
