@@ -37,17 +37,17 @@ public class StudentMapper {
             return null;
         }
         
-        StudentDTO dto = new StudentDTO();
-        dto.setId(entity.getId());
-        dto.setCin(entity.getCin());
-        dto.setNom(entity.getNom());
-        dto.setDateNaissance(entity.getDateNaissance());
-        dto.setEmail(entity.getEmail());
-        dto.setAnneePremiereInscription(entity.getAnneePremiereInscription());
-        dto.setDepartementId(entity.getDepartement() != null ? entity.getDepartement().getId() : null);
-        dto.setDepartementNom(entity.getDepartement() != null ? entity.getDepartement().getNom() : null);
-        dto.setAge(entity.age());
-        return dto;
+        return StudentDTO.builder()
+                .id(entity.getId())
+                .cin(entity.getCin())
+                .nom(entity.getNom())
+                .dateNaissance(entity.getDateNaissance())
+                .email(entity.getEmail())
+                .anneePremiereInscription(entity.getAnneePremiereInscription())
+                .departementId(entity.getDepartement() != null ? entity.getDepartement().getId() : null)
+                .departementNom(entity.getDepartement() != null ? entity.getDepartement().getNom() : null)
+                .age(entity.age())
+                .build();
     }
     
     /**
@@ -69,13 +69,13 @@ public class StudentMapper {
                     .orElseThrow(() -> new ResourceNotFoundException("Department not found with id: " + dto.getDepartementId()));
         }
         
-        Student student = new Student();
-        student.setCin(dto.getCin());
-        student.setNom(dto.getNom());
-        student.setDateNaissance(dto.getDateNaissance());
-        student.setEmail(dto.getEmail());
-        student.setAnneePremiereInscription(dto.getAnneePremiereInscription());
-        student.setDepartement(dept);
-        return student;
+        return Student.builder()
+                .cin(dto.getCin())
+                .nom(dto.getNom())
+                .dateNaissance(dto.getDateNaissance())
+                .email(dto.getEmail())
+                .anneePremiereInscription(dto.getAnneePremiereInscription())
+                .departement(dept)
+                .build();
     }
 }

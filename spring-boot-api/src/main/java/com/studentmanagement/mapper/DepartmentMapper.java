@@ -24,10 +24,10 @@ public class DepartmentMapper {
             return null;
         }
         
-        DepartmentDTO dto = new DepartmentDTO();
-        dto.setId(entity.getId());
-        dto.setNom(entity.getNom());
-        return dto;
+        return DepartmentDTO.builder()
+                .id(entity.getId())
+                .nom(entity.getNom())
+                .build();
     }
     
     /**
@@ -41,9 +41,9 @@ public class DepartmentMapper {
             return null;
         }
         
-        Department entity = new Department();
-        entity.setId(dto.getId());
-        entity.setNom(dto.getNom());
-        return entity;
+        return Department.builder()
+                .id(dto.getId())
+                .nom(dto.getNom())
+                .build();
     }
 }

@@ -7,27 +7,27 @@ Fonctionnalité: Calcul de l'âge d'un étudiant
   Scénario: Étudiant né il y a 22 ans
     Étant donné un étudiant avec la date de naissance "2002-04-07"
     Quand on calcule son âge
-    Alors l'âge retourné doit être 23
+    Alors l'âge retourné doit être 24
 
   Scénario: Étudiant né il y a 20 ans
     Étant donné un étudiant avec la date de naissance "2004-01-15"
     Quand on calcule son âge
-    Alors l'âge retourné doit être 21
+    Alors l'âge retourné doit être 22
 
   Scénario: Étudiant né il y a 1 an
     Étant donné un étudiant avec la date de naissance "2024-06-20"
     Quand on calcule son âge
-    Alors l'âge retourné doit être 0
+    Alors l'âge retourné doit être 1
 
   Scénario: Étudiant né dans l'année courante
     Étant donné un étudiant avec la date de naissance "2025-01-01"
     Quand on calcule son âge
-    Alors l'âge retourné doit être 0
+    Alors l'âge retourné doit être 1
 
   Scénario: Cas limite - Étudiant né un jour bissextile
     Étant donné un étudiant avec la date de naissance "2000-02-29"
     Quand on calcule son âge
-    Alors l'âge retourné doit être 24
+    Alors l'âge retourné doit être 26
 
   Plan du Scénario: Calcul de l'âge pour différentes dates de naissance
     Étant donné un étudiant avec la date de naissance "<dateNaissance>"
@@ -36,9 +36,9 @@ Fonctionnalité: Calcul de l'âge d'un étudiant
 
     Exemples:
       | dateNaissance | ageAttendu |
-      | 2004-01-15    | 21         |
-      | 2005-06-20    | 19         |
-      | 2025-01-01    | 0          |
-      | 2000-02-29    | 24         |
-      | 1995-12-31    | 29         |
-      | 2010-03-10    | 14         |
+      | 2004-01-15    | 22         |
+      | 2005-06-20    | 20         |
+      | 2025-01-01    | 1          |
+      | 2000-02-29    | 26         |
+      | 1995-12-31    | 30         |
+      | 2010-03-10    | 16         |

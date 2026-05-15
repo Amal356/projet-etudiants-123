@@ -102,10 +102,14 @@ public class DepartmentService {
         Department existing = departmentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Department not found with id: " + id));
         
-        // Update fields
-        existing.setNom(dto.getNom());
+        // Create updated department using builder
+        Department updated = Department.builder()
+                .id(existing.getId())
+                .nom(dto.getNom())
+                .students(existing.getStudents())
+                .build();
         
-        Department saved = departmentRepository.save(existing);
+        Department saved = departmentRepository.save(updated);
         log.info("Successfully updated department with id: {}", saved.getId());
         return departmentMapper.toDTO(saved);
     }

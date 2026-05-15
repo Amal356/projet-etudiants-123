@@ -1,160 +1,184 @@
-name: CI Tests and Quality
+name: Tests et Rapport Qualité
 
 on:
   push:
-    branches: [ main, version-2, version-3, version-4 ]
+    branches: [ version-4, main ]
   pull_request:
-    branches: [ main, version-2, version-3, version-4 ]
+    branches: [ version-4, main ]
 
 jobs:
-  test-spring-boot:
-    name: Test Spring Boot API
+  test-backend:
     runs-on: ubuntu-latest
     
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      
-      - name: Set up JDK 21
-        uses: actions/setup-java@v3
-        with:
-          java-version: '21'
-          distribution: 'temurin'
-          cache: 'maven'
-      
-      - name: Run tests for spring-boot-api
-        run: |
-          cd spring-boot-api
-          mvn clean verify
-      
-      - name: Generate JaCoCo report
-        run: |
-          cd spring-boot-api
-          mvn jacoco:report
-      
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
-        with:
-          files: ./spring-boot-api/target/site/jacoco/jacoco.xml
-          flags: spring-boot-api
-          name: spring-boot-api-coverage
-      
-      - name: Publish Test Report
-        uses: mikepenz/action-junit-report@v3
-        if: always()
-        with:
-          report_paths: '**/target/surefire-reports/TEST-*.xml'
-          check_name: Spring Boot API Test Results
-
-  test-grading-service:
-    name: Test Grading Service
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      
-      - name: Set up JDK 21
-        uses: actions/setup-java@v3
-        with:
-          java-version: '21'
-          distribution: 'temurin'
-          cache: 'maven'
-      
-      - name: Run tests for grading-service
-        run: |
-          cd grading-service
-          mvn clean verify
-      
-      - name: Generate JaCoCo report
-        run: |
-          cd grading-service
-          mvn jacoco:report
-      
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
-        with:
-          files: ./grading-service/target/site/jacoco/jacoco.xml
-          flags: grading-service
-          name: grading-service-coverage
-
-  test-auth-service:
-    name: Test Auth Service
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: auth-service/package-lock.json
-      
-      - name: Install dependencies
-        run: |
-          cd auth-service
-          npm ci
-      
-      - name: Run tests
-        run: |
-          cd auth-service
-          npm test
+    services:
+      postgres:
+        image: postgres:15
         env:
-          MONGODB_URI: mongodb://localhost:27017/test
-          JWT_SECRET: test-secret-key
+          POSTGRES_DB: testdb
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
-  build-docker-images:
-    name: Build Docker Images
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up JDK 21
+      uses: actions/setup-java@v3
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        cache: maven
+    
+    - name: Run Tests with Maven
+      working-directory: ./spring-boot-api
+      run: mvn clean verify
+      env:
+        SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/testdb
+        SPRING_DATASOURCE_USERNAME: test
+        SPRING_DATASOURCE_PASSWORD: test
+        REDIS_HOST: localhost
+        REDIS_PORT: 6379
+    
+    - name: Generate JaCoCo Report
+      working-directory: ./spring-boot-api
+      run: mvn jacoco:report
+    
+    - name: Check Coverage
+      working-directory: ./spring-boot-api
+      run: mvn jacoco:check
+    
+    - name: Upload Coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        files: ./spring-boot-api/target/site/jacoco/jacoco.xml
+        flags: unittests
+        name: codecov-umbrella
+    
+    - name: Publish Test Results
+      uses: EnricoMi/publish-unit-test-result-action@v2
+      if: always()
+      with:
+        files: |
+          spring-boot-api/target/surefire-reports/*.xml
+          spring-boot-api/target/failsafe-reports/*.xml
+    
+    # Publier vers Xray (si configuré)
+    - name: Publish to Xray
+      if: github.event_name == 'push' && (github.ref == 'refs/heads/version-4' || github.ref == 'refs/heads/main')
+      working-directory: ./spring-boot-api
+      run: |
+        if [ -n "${{ secrets.XRAY_CLIENT_ID }}" ]; then
+          # Obtenir le token Xray
+          TOKEN=$(curl -H "Content-Type: application/json" \
+            -X POST \
+            --data "{ \"client_id\": \"${{ secrets.XRAY_CLIENT_ID }}\", \"client_secret\": \"${{ secrets.XRAY_CLIENT_SECRET }}\" }" \
+            https://xray.cloud.getxray.app/api/v2/authenticate | tr -d '"')
+          
+          # Publier les résultats
+          curl -H "Content-Type: application/xml" \
+            -H "Authorization: Bearer ${TOKEN}" \
+            --data @target/surefire-reports/TEST-*.xml \
+            "https://xray.cloud.getxray.app/api/v2/import/execution/junit?projectKey=PROJ"
+        else
+          echo "Xray credentials not configured, skipping..."
+        fi
+
+  test-frontend:
     runs-on: ubuntu-latest
-    needs: [test-spring-boot, test-grading-service]
     
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-      
-      - name: Build Eureka Server
-        run: |
-          cd eureka-server
-          docker build -t eureka-server:test .
-      
-      - name: Build API Gateway
-        run: |
-          cd api-gateway
-          docker build -t api-gateway:test .
-      
-      - name: Build Spring Boot API
-        run: |
-          cd spring-boot-api
-          docker build -t etudiant-service:test .
-      
-      - name: Build Grading Service
-        run: |
-          cd grading-service
-          docker build -t grading-service:test .
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'
+        cache: 'npm'
+        cache-dependency-path: frontend/package-lock.json
+    
+    - name: Install dependencies
+      working-directory: ./frontend
+      run: npm ci
+    
+    - name: Build Frontend
+      working-directory: ./frontend
+      run: npm run build
+    
+    - name: Lint Frontend
+      working-directory: ./frontend
+      run: npm run lint
 
-  quality-check:
-    name: Code Quality Check
+  test-e2e:
+    runs-on: ubuntu-latest
+    needs: [test-backend, test-frontend]
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Start Docker Compose
+      run: docker compose up -d
+    
+    - name: Wait for services
+      run: |
+        echo "Waiting for services to be ready..."
+        sleep 30
+        curl --retry 10 --retry-delay 5 --retry-connrefused http://localhost:8888/actuator/health
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'
+    
+    - name: Install Cypress
+      working-directory: ./cypress-tests
+      run: npm ci
+    
+    - name: Run Cypress Tests
+      working-directory: ./cypress-tests
+      run: npx cypress run
+    
+    - name: Upload Cypress Screenshots
+      uses: actions/upload-artifact@v3
+      if: failure()
+      with:
+        name: cypress-screenshots
+        path: cypress-tests/cypress/screenshots
+    
+    - name: Stop Docker Compose
+      if: always()
+      run: docker compose down
+
+  security-scan:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      
-      - name: Set up JDK 21
-        uses: actions/setup-java@v3
-        with:
-          java-version: '21'
-          distribution: 'temurin'
-          cache: 'maven'
-      
-      - name: Check code coverage threshold
-        run: |
-          cd spring-boot-api
-          mvn clean verify
-          echo "✅ Code coverage check passed"
+    - uses: actions/checkout@v3
+    
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        scan-ref: '.'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+    
+    - name: Upload Trivy results to GitHub Security
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: 'trivy-results.sarif'

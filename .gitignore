@@ -32,8 +32,9 @@ build/
 dist/
 
 # ===========================
-# Flutter / Dart
+# Flutter / Dart (NOT USED - Using React instead)
 # ===========================
+mobile_app/
 .dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies

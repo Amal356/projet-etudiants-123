@@ -126,23 +126,25 @@ public class StudentService {
         Student existing = studentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + id));
         
-        // Update fields
-        existing.setCin(request.getCin());
-        existing.setNom(request.getNom());
-        existing.setDateNaissance(request.getDateNaissance());
-        existing.setEmail(request.getEmail());
-        existing.setAnneePremiereInscription(request.getAnneePremiereInscription());
-        
-        // Update department if provided
+        // Determine department
+        Department department = null;
         if (request.getDepartementId() != null) {
-            Department department = departmentRepository.findById(request.getDepartementId())
+            department = departmentRepository.findById(request.getDepartementId())
                     .orElseThrow(() -> new ResourceNotFoundException("Department not found with id: " + request.getDepartementId()));
-            existing.setDepartement(department);
-        } else {
-            existing.setDepartement(null);
         }
         
-        Student saved = studentRepository.save(existing);
+        // Create updated student using builder
+        Student updated = Student.builder()
+                .id(existing.getId())
+                .cin(request.getCin())
+                .nom(request.getNom())
+                .dateNaissance(request.getDateNaissance())
+                .email(request.getEmail())
+                .anneePremiereInscription(request.getAnneePremiereInscription())
+                .departement(department)
+                .build();
+        
+        Student saved = studentRepository.save(updated);
         log.info("Successfully updated student with id: {}", saved.getId());
         return studentMapper.toDTO(saved);
     }
