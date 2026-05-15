@@ -4,8 +4,9 @@
 
 **Projet :** Système de Gestion des Étudiants - Architecture Microservices  
 **Période :** Janvier 2026 - Mai 2026  
-**Statut :** ✅ **97% Complété**  
-**Jira Board :** https://amalyousef356.atlassian.net/jira/software/projects/PROJ/boards/100
+**Statut :** ✅ **97% Complété** (Xray optionnel)  
+**Jira Board :** https://amalyousef356.atlassian.net/jira/software/projects/PROJ/boards/100  
+**GitHub Repository :** https://github.com/Amal356/projet-etudiants-123
 
 ---
 
@@ -113,20 +114,20 @@
 
 ---
 
-### ⚠️ Sprint 4 - Tests et Qualité (95%)
+### ✅ Sprint 4 - Tests et Qualité (97%)
 **Période :** 9 mai - 23 mai (9 User Stories)
 
 | Ticket | Titre | Statut | Implémentation |
 |--------|-------|--------|----------------|
-| PROJ-29 | Créer branche version-4 | À FAIRE | ✅ Fait |
-| PROJ-30 | Tests unitaires JUnit + Mockito | À FAIRE | ✅ Fait (41/41) |
-| PROJ-31 | Tests intégration Testcontainers | À FAIRE | ✅ Fait |
-| PROJ-32 | Tests E2E Cypress | À FAIRE | ✅ Fait (21/21) |
-| PROJ-33 | Tests stress Gatling | À FAIRE | ✅ Fait (360/360) |
-| PROJ-34 | JaCoCo ≥ 80% | À FAIRE | ✅ Configuré |
-| PROJ-35 | Intégration GitHub ↔ Jira | À FAIRE | ✅ Fait |
-| PROJ-36 | Intégration Xray | À FAIRE | ⚠️ À configurer |
-| PROJ-37 | Auth service Express MongoDB JWT | À FAIRE | ✅ Fait |
+| PROJ-29 | Créer branche version-4 | ✅ TERMINÉ | ✅ Fait |
+| PROJ-30 | Tests unitaires JUnit + Mockito | ✅ TERMINÉ | ✅ Fait (41/41) |
+| PROJ-31 | Tests intégration Testcontainers | ✅ TERMINÉ | ✅ Fait |
+| PROJ-32 | Tests E2E Cypress | ✅ TERMINÉ | ✅ Fait (21/21) |
+| PROJ-33 | Tests stress Gatling | ✅ TERMINÉ | ✅ Fait (360/360) |
+| PROJ-34 | JaCoCo ≥ 80% | ✅ TERMINÉ | ✅ Configuré |
+| PROJ-35 | Intégration GitHub ↔ Jira | ✅ TERMINÉ | ✅ Testé (commit 24dd45c) |
+| PROJ-36 | Intégration Xray | À FAIRE | ⚠️ Optionnel |
+| PROJ-37 | Auth service Express MongoDB JWT | ✅ TERMINÉ | ✅ Fait |
 
 **Livrables :**
 - ✅ Branche version-4
@@ -136,7 +137,7 @@
 - ✅ Tests E2E Cypress (21 tests)
 - ✅ Tests de stress Gatling (360 requêtes)
 - ✅ Couverture JaCoCo configurée (≥ 80%)
-- ✅ Intégration GitHub ↔ Jira
+- ✅ Intégration GitHub ↔ Jira (commit 24dd45c testé)
 - ✅ Workflow GitHub Actions
 - ⚠️ Intégration Xray (optionnelle)
 - ✅ Service Auth (Express + MongoDB + JWT)
@@ -166,6 +167,12 @@
 - **Complétées** : 37 (97%)
 - **En cours** : 1 (PROJ-36 - Xray optionnel)
 - **Story Points** : 120+ SP
+
+### Intégration GitHub ↔ Jira
+- **Statut** : ✅ Testée et fonctionnelle
+- **Commit de test** : `24dd45c`
+- **Message** : "PROJ-35 : Test intégration GitHub Jira - Ajout documentation Sprint 4"
+- **Date** : 15 mai 2026
 
 ---
 

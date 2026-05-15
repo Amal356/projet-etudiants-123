@@ -3,26 +3,36 @@
 ## 🎯 Objectif
 Ce fichier sert à tester l'intégration entre GitHub et Jira.
 
-## 📝 Instructions de Test
+## ✅ TEST EFFECTUÉ
 
-### Étape 1 : Créer un commit avec référence Jira
+**Date :** 15 mai 2026  
+**Commit créé :** `24dd45c`  
+**Message :** `PROJ-35 : Test intégration GitHub Jira - Ajout documentation Sprint 4`  
+**Branche :** `version-4`  
+**Statut :** ✅ Commit poussé avec succès vers GitHub
+
+## 📝 Instructions de Vérification
+
+### Étape 1 : ✅ Commit créé avec référence Jira
 ```bash
-git add TEST_INTEGRATION_JIRA.md
-git commit -m "PROJ-30 : Test intégration GitHub Jira"
+git add TEST_INTEGRATION_JIRA.md PROJET_COMPLET_RESUME.md SPRINT4_USER_STORIES.md
+git commit -m "PROJ-35 : Test intégration GitHub Jira - Ajout documentation Sprint 4"
 git push origin version-4
 ```
+**Résultat :** ✅ Commit `24dd45c` poussé avec succès
 
 ### Étape 2 : Vérifier dans Jira
-1. Ouvrir le ticket PROJ-30 dans Jira
-2. Regarder le panneau de droite
-3. Chercher la section "Development" ou "Développement"
+1. Ouvrir le ticket **PROJ-35** dans Jira : https://amalyousef356.atlassian.net/browse/PROJ-35
+2. Regarder le **panneau de droite** du ticket
+3. Chercher la section **"Development"** ou **"Développement"**
 4. Vérifier si le commit apparaît
 
 ### Étape 3 : Résultat Attendu
 Si l'intégration fonctionne, vous devriez voir :
-- ✅ Le commit avec le message "PROJ-30 : Test intégration GitHub Jira"
+- ✅ Le commit avec le message "PROJ-35 : Test intégration GitHub Jira - Ajout documentation Sprint 4"
 - ✅ Le nom de la branche (version-4)
 - ✅ Un lien vers le commit sur GitHub
+- ✅ Le hash du commit : `24dd45c`
 
 ## ✅ Checklist de Vérification
 
